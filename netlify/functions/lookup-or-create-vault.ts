@@ -39,8 +39,16 @@ export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
   const { JSONBIN_API_KEY, MASTER_INDEX_BIN_ID } = process.env;
 
   if (!JSONBIN_API_KEY || !MASTER_INDEX_BIN_ID) {
-    console.error('Environment variables not configured.');
-    return { statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({ message: 'Configuration error on server.' })};
+    const missingVars: string[] = [];
+    if (!JSONBIN_API_KEY) missingVars.push('JSONBIN_API_KEY');
+    if (!MASTER_INDEX_BIN_ID) missingVars.push('MASTER_INDEX_BIN_ID');
+    const errorMessage = `Configuration error on server. Missing: ${missingVars.join(', ')}.`;
+    console.error(errorMessage);
+    return { 
+        statusCode: 500, 
+        headers: CORS_HEADERS, 
+        body: JSON.stringify({ message: errorMessage })
+    };
   }
   
   if (!event.body) {

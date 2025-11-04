@@ -30,8 +30,9 @@ export async function handler(event: HandlerEvent): Promise<HandlerResponse> {
   
   const { JSONBIN_API_KEY } = process.env;
   if (!JSONBIN_API_KEY) {
-    console.error('JSONBIN_API_KEY environment variable not configured.');
-    return { statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({ message: 'Configuration error on server.' }) };
+    const errorMessage = 'Configuration error on server. Missing environment variable: JSONBIN_API_KEY.';
+    console.error(errorMessage);
+    return { statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({ message: errorMessage }) };
   }
   
   if (!event.body) {

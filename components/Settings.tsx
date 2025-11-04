@@ -128,8 +128,9 @@ const Settings: React.FC<SettingsProps> = ({
         await updateEncryptedAppState(authState.binId, authState.password, appState);
         setSuccess('¡Datos sincronizados con la nube correctamente!');
     } catch (e: any) {
-        if (e.message === 'Configuration error on server.') {
-          setError('El servicio de sincronización no está configurado. No se pueden guardar los datos en la nube.');
+        if (e.message && e.message.startsWith('Configuration error on server.')) {
+          const detail = e.message.replace('Configuration error on server.', '').trim().replace('Missing environment variable:', 'Falta la variable de entorno:').replace('Missing:', 'Faltan:');
+          setError(`El servicio de sincronización no está configurado. ${detail} No se pueden guardar los datos en la nube.`);
         } else {
           setError(e.message || 'Error al sincronizar los datos.');
         }
