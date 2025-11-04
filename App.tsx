@@ -89,7 +89,11 @@ const MasterPasswordScreen: React.FC<LoginProps> = ({ onLoginSuccess, onWorkOffl
       onLoginSuccess(loadedState || INITIAL_APP_STATE, password, binId);
 
     } catch (err: any) {
-      setError(err.message || 'Ha ocurrido un error inesperado.');
+      if (err.message === 'Configuration error on server.') {
+        setError('El servicio de sincronización en la nube no está configurado. Puede continuar para trabajar sin conexión.');
+      } else {
+        setError(err.message || 'Ha ocurrido un error inesperado.');
+      }
       setLoading(false);
     }
   };

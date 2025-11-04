@@ -5,9 +5,9 @@ interface EncryptedPayload {
   payload: string;
 }
 
-// --- Raw fetchers (unchanged logic, just typed for clarity) ---
-const getRawBinData = async (apiKey: string, binId: string): Promise<any> => {
-  const response = await fetch(`/.netlify/functions/get-bin-data?apiKey=${encodeURIComponent(apiKey)}&binId=${encodeURIComponent(binId)}`, {
+// --- Raw fetchers ---
+const getRawBinData = async (binId: string): Promise<any> => {
+  const response = await fetch(`/.netlify/functions/get-bin-data?binId=${encodeURIComponent(binId)}`, {
     method: 'GET',
   });
 
@@ -25,13 +25,13 @@ const getRawBinData = async (apiKey: string, binId: string): Promise<any> => {
   return data.record || data;
 };
 
-const updateRawBinData = async (apiKey: string, binId: string, data: any): Promise<void> => {
+const updateRawBinData = async (binId: string, data: any): Promise<void> => {
   const response = await fetch(`/.netlify/functions/update-bin-data`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ apiKey, binId, data }),
+    body: JSON.stringify({ binId, data }),
   });
 
   if (!response.ok) {
@@ -44,8 +44,7 @@ const updateRawBinData = async (apiKey: string, binId: string, data: any): Promi
 // --- Encrypted Data Service ---
 
 export const getEncryptedAppState = async (binId: string, password: string): Promise<AppState | null> => {
-  // We can pass a dummy API key as the Netlify function will use its own secure key.
-  const data = await getRawBinData('master_key', binId);
+  const data = await getRawBinData(binId);
 
   // If data is null or doesn't have an encrypted payload, it's a new or empty bin.
   if (!data || !data.payload) {
@@ -65,8 +64,7 @@ export const getEncryptedAppState = async (binId: string, password: string): Pro
 export const updateEncryptedAppState = async (binId: string, password: string, state: AppState): Promise<void> => {
   const encryptedPayload = await encrypt(JSON.stringify(state), password);
   const dataToSave: EncryptedPayload = { payload: encryptedPayload };
-  // We can pass a dummy API key as the Netlify function will use its own secure key.
-  await updateRawBinData('master_key', binId, dataToSave);
+  await updateRawBinData(binId, dataToSave);
 };
 
 export const lookupOrCreateVault = async (userHash: string): Promise<string> => {

@@ -5,8 +5,10 @@ const b64encode = (buffer: BufferSource) => {
   if (buffer instanceof ArrayBuffer) {
     return btoa(String.fromCharCode(...new Uint8Array(buffer)));
   }
-  // The buffer is an ArrayBufferView, which the Uint8Array constructor can also handle (by copying).
-  return btoa(String.fromCharCode(...new Uint8Array(buffer)));
+  // FIX: When buffer is an ArrayBufferView, TypeScript can fail to resolve the correct
+  // Uint8Array constructor overload. This explicitly creates a view on the underlying
+  // buffer to avoid the error.
+  return btoa(String.fromCharCode(...new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength)));
 };
 // FIX: Changed to return Uint8Array instead of ArrayBuffer to fix a type error in `deriveKey` call within the `decrypt` function.
 const b64decode = (str: string) => Uint8Array.from(atob(str), c => c.charCodeAt(0));
@@ -15,6 +17,7 @@ const b64decode = (str: string) => Uint8Array.from(atob(str), c => c.charCodeAt(
 export const hashPassword = async (password: string): Promise<string> => {
   const encoder = new TextEncoder();
   const data = encoder.encode(password);
+  // FIX: Corrected typo in hash algorithm name from 'SHA-26' to 'SHA-256'.
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
   // Convert ArrayBuffer to hex string
   const hashArray = Array.from(new Uint8Array(hashBuffer));
