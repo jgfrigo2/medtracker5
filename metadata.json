@@ -1,0 +1,5 @@
+{
+  "name": "Rastreador de Salud Diario_v2",
+  "description": "Una aplicación web para registrar, gestionar y visualizar datos de salud cada media hora. Incluye seguimiento de valores numéricos, medicación y comentarios, con gráficos diarios y gestión de datos local y en la nube.",
+  "requestFramePermissions": []
+}
