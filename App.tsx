@@ -97,8 +97,8 @@ const MasterPasswordScreen: React.FC<LoginProps> = ({ onLoginSuccess, onWorkOffl
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
       <div className="p-8 bg-white dark:bg-gray-800 rounded-lg shadow-2xl w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-center text-gray-800 dark:text-gray-100 mb-2">Sincronización Segura</h1>
-        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-6">Usa tu contraseña maestra para acceder a tus datos desde cualquier dispositivo.</p>
+        <h1 className="text-2xl font-bold text-center text-gray-800 dark:text-gray-100 mb-2">Protege y Sincroniza tus Datos</h1>
+        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-6">Crea una contraseña maestra para guardar tus datos de forma segura, o ingresa la existente para sincronizar.</p>
         <form onSubmit={handleLogin}>
           <div className="mb-4">
             <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-300">Contraseña Maestra</label>
@@ -109,12 +109,15 @@ const MasterPasswordScreen: React.FC<LoginProps> = ({ onLoginSuccess, onWorkOffl
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-2 text-gray-800 bg-gray-200 dark:bg-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               autoFocus
-              placeholder="Tu frase secreta"
+              placeholder="Crea o ingresa tu frase secreta"
             />
+             <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              Si es tu primera vez, la contraseña que ingreses aquí se convertirá en tu clave de acceso. <strong>¡No la olvides!</strong> No se puede recuperar.
+            </p>
           </div>
           {error && <p className="text-red-500 text-sm text-center mb-4">{error}</p>}
           <button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors duration-300 flex items-center justify-center disabled:bg-blue-400 dark:disabled:bg-blue-800">
-            {loading ? <SpinnerIcon /> : 'Sincronizar / Entrar'}
+            {loading ? <SpinnerIcon /> : 'Continuar'}
           </button>
         </form>
         <div className="mt-4 text-center">

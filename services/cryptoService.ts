@@ -1,6 +1,13 @@
 // --- Helper functions for encoding/decoding ---
-// FIX: The type of `buffer` should be `BufferSource` to accept both ArrayBuffer and Uint8Array, improving type safety.
-const b64encode = (buffer: BufferSource) => btoa(String.fromCharCode(...new Uint8Array(buffer)));
+// FIX: Using BufferSource improves type safety. A type guard is added to help TypeScript resolve the correct
+// Uint8Array constructor overload when dealing with the BufferSource union type (ArrayBuffer | ArrayBufferView).
+const b64encode = (buffer: BufferSource) => {
+  if (buffer instanceof ArrayBuffer) {
+    return btoa(String.fromCharCode(...new Uint8Array(buffer)));
+  }
+  // The buffer is an ArrayBufferView, which the Uint8Array constructor can also handle (by copying).
+  return btoa(String.fromCharCode(...new Uint8Array(buffer)));
+};
 // FIX: Changed to return Uint8Array instead of ArrayBuffer to fix a type error in `deriveKey` call within the `decrypt` function.
 const b64decode = (str: string) => Uint8Array.from(atob(str), c => c.charCodeAt(0));
 
